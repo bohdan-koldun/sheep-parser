@@ -18,5 +18,6 @@ export interface NormalizedSong {
         author: Author;
         year: string;
         text: string;
+        href?: string;
     };
 }

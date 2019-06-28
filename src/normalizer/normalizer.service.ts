@@ -73,6 +73,7 @@ export class NormalizerService {
                 author: album.author,
                 year: null,
                 text: null,
+                href: album.href,
             },
         };
     }
