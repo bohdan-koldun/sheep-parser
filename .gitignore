@@ -1,0 +1,33 @@
+# Node modules
+node_modules
+dist
+
+# Environment variables, never commit this file
+.env
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+logs.txt
+
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw*
+
+.DS_Store
+
+*.txt
+!test/factories/page_examples/*
+
+# Test files
+info.test
+error.test
+coverage

@@ -1,0 +1,13 @@
+image: node:11
+
+pipelines:
+  default:
+    - step:
+        name: Test
+        caches:
+          - node
+        script:
+          - cp .env.example .env
+          - sed -i "s,^NODE_ENV=,NODE_ENV=testing," .env
+          - yarn
+          - yarn test

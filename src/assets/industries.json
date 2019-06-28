@@ -1,0 +1,135 @@
+{
+    "advertising-marketing": [
+        "advertising",
+        "marketing",
+        "Marketplaces"
+    ],
+    "arts-fashion-media": [
+        "art",
+        "video",
+        "audio",
+        "music",
+        "film",
+        "comics",
+        "fashion",
+        "wearables",
+        "dance",
+        "theater",
+        "tv shows",
+        "photography",
+        "writing ",
+        "publishing",
+        "podcasts",
+        "creations",
+        "blogs",
+        "vlogs",
+        "journalism",
+        "novel",
+        "apparel",
+        "paint"
+    ],
+    "business-to-business": [
+        "business",
+        "B2B"
+    ],
+    "cleantech": [
+        "cleantech",
+        "green tech"
+    ],
+    "construction-manufacturing": [
+        "construction",
+        "manufacturing",
+        "local businesses"
+    ],
+    "consumer-products": [
+        "consumer",
+        "products",
+        "home",
+        "craft",
+        "stationery",
+        "pottery",
+        "tool",
+        "wearables",
+        "jewerly",
+        "Retail",
+        "Apparel"
+    ],
+    "ed-tech": [
+        "ed-tech",
+        "education",
+        "productivity"
+    ],
+    "energy-transport": [
+        "energy",
+        "transport",
+        "transportation"
+    ],
+    "finance": [
+        "finance",
+        "E-commerce"
+    ],
+    "fintech": [
+        "fintech",
+        "B2C"
+    ],
+    "food-beverage": [
+        "food",
+        "beverage"
+    ],
+    "healthcare": [
+        "healthcare",
+        "health",
+        "fitness",
+        "wellness",
+        "medical",
+        "animal",
+        "hospitality",
+        "emergencies"
+    ],
+    "hospitality": [
+        "hospitality"
+    ],
+    "impact-investments": [
+        "investments",
+        "impact",
+        "Social Impact",
+        "Education"
+    ],
+    "internet": [
+        "internet"
+    ],
+    "lifestyle": [
+        "lifestyle",
+        "travel",
+        "culture",
+        "human rights",
+        "environment",
+        "community",
+        "Sports"
+    ],
+    "mobile-gaming": [
+        "mobile",
+        "gaming",
+        "games",
+        "tabletop",
+        "gadgets",
+        "Apps",
+        "Mobile"
+    ],
+    "real-estate": [
+        "real estate",
+        "estate"
+    ],
+    "technology": [
+        "technology",
+        "innovative products",
+        "gear",
+        "accessories",
+        "electronics",
+        "space",
+        "hardware",
+        "Tech",
+        "Biotech"
+    ],
+    "patreon": [ "patreon" ]
+}

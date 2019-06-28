@@ -1,0 +1,19 @@
+{
+  "language": "ts",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "projects": {
+    "parser": {
+      "root": "libs/parser",
+      "sourceRoot": "libs/parser/src"
+    },
+    "socket": {
+      "root": "libs/socket",
+      "sourceRoot": "libs/socket/src"
+    },
+    "file-uploader": {
+      "root": "libs/file-uploader",
+      "sourceRoot": "libs/file-uploader/src"
+    }
+  }
+}
