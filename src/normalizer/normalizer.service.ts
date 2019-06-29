@@ -23,40 +23,26 @@ export class NormalizerService {
     private readonly validTypes: string[] = [
         'jpg',
         'png',
+        'mp3',
         'gif',
-        'mp4',
-        'pdf',
-        'docx',
-        'pptx',
     ];
 
     async normalizeSong(song: DetailedSong): Promise<NormalizedSong> {
-        // const thumbnail = await this.normalizeLink(campaign.background_url);
-        // const logo = await this.normalizeLink(campaign.logo_url);
-        // const mainVideo = await this.normalizeLink(campaign.video_attachment)
-        //     || campaign.video_attachment;
+        const {
+            title, songText, chordsKey,
+            tags, videoAttachment, translations, url,
+        } = song;
 
-        // const short_description = NormalizerService.cleanAllTags(campaign.short_description);
-
-        // let fullDescription = await this.normalizeHtml(campaign.full_description);
-        // fullDescription = this.clearHtmlFromAttribs(fullDescription);
-        // fullDescription = this.changeRelativeHref(fullDescription, campaign.parsed_from);
-
-        // const startAt = NormalizerService.normalizeTime(launched_at);
-        // const endAt = NormalizerService.normalizeTime(ended_at);
-        // const typeSlug = NormalizerService.normalizeTypeToSlug(
-        //     campaign.parsed_from,
-        //     campaign.deal_type,
-        // );
-        // const categorySlug = NormalizerService.normalizeCategoryToSlug(
-        //     campaign.parsed_from,
-        //     campaign.crowdfunder_category,
-        // );
-        // const industrySlug = NormalizerService.normalizeIndustryToSlug(
-        //     campaign.project_category,
-        // );
-
-        const { title, songText, chordsKey, tags, album, audioMp3, videoAttachment, translations, url} = song;
+        let { audioMp3, album } = song;
+        audioMp3 = await this.normalizeLink(audioMp3, title);
+        album = {
+            ...album,
+            thumbnailImg: await this.normalizeLink(album.thumbnailImg, 'album_' + album.title),
+            author: {
+                ...album.author,
+                thumbnailImg: await this.normalizeLink(album.author.thumbnailImg, 'author_' + album.author.name),
+            },
+        };
 
         return {
             title,
@@ -67,41 +53,13 @@ export class NormalizerService {
             tags,
             translations,
             chordsKey,
-            album: {
-                title: album.title,
-                thumbnailImg: album.thumbnailImg,
-                author: album.author,
-                year: null,
-                text: null,
-                href: album.href,
-            },
+            album,
         };
     }
 
-    private async normalizeLink(url: string): Promise<string> {
+    private async normalizeLink(url: string, title?: string): Promise<string> {
         try {
             if (!url) { return null; }
-
-            if (url.startsWith('data:image')) {
-                const dataMatch = url.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-                const bufferData = Buffer.from(dataMatch[2], 'base64');
-
-                const readableForHashing = new Readable();
-                readableForHashing.push(bufferData);
-                readableForHashing.push(null);
-
-                const hash = await this.hashFile(readableForHashing, 0.1);
-
-                const readableForUploading = new Readable();
-                readableForUploading.push(bufferData);
-                readableForUploading.push(null);
-
-                return await this.generateNewUrl(
-                    hash,
-                    null,
-                    readableForUploading,
-                );
-            }
 
             const file = await this.fileUploaderService.downloadFileFromUrl(url);
             if (!file) { return null; }
@@ -115,7 +73,9 @@ export class NormalizerService {
             }
 
             if (this.validTypes.indexOf(fileStreamWithType.fileType.ext) > -1) {
-                const hash = await this.hashFile(fileStreamWithType, fileSize);
+                let hash = await this.hashFile(fileStreamWithType, fileSize);
+                const titleName = title ? title.split(' ').join('_') : '';
+                hash = `${titleName}_SM_${hash}.${fileStreamWithType.fileType.ext}`;
                 return await this.generateNewUrl(hash, url);
             } else {
                 fileStreamWithType.destroy();
@@ -274,44 +234,6 @@ export class NormalizerService {
                 }
             }),
         );
-    }
-
-    private static normalizeTime(time: string | number): string {
-        if (!time) { return null; }
-
-        const date = typeof time === 'number' ? moment.unix(time) : moment(new Date(time));
-        const formatedDate = date.format();
-        return formatedDate !== 'Invalid date' ? formatedDate : null;
-    }
-
-    private static normalizeIndustryToSlug(parsedIndustries: string): string {
-        if (!parsedIndustries || parsedIndustries.length === 0) { return 'other'; }
-
-        const industriesArr = parsedIndustries.split('|');
-        const result = [];
-        industriesArr.forEach(industry => {
-            let regex;
-            let max = 0;
-            let maxKey;
-            const matches = {};
-            for (const key of Object.keys(industries)) {
-                for (const subIndustry of industries[key]) {
-                    regex = RegExp(subIndustry, 'i');
-                    if (regex.test(industry)) {
-                        matches[key] = matches[key] ? matches[key]++ : (matches[key] = 1);
-                        if (matches[key] > max) {
-                            max = matches[key];
-                            maxKey = key;
-                        }
-                    }
-                }
-            }
-
-            const normalizedIndustry = maxKey ? maxKey : 'other';
-            if (!result.includes(normalizedIndustry)) { result.push(normalizedIndustry); }
-        });
-
-        return result.join(',');
     }
 
     private static cleanAllTags(shortDescription: string): string {

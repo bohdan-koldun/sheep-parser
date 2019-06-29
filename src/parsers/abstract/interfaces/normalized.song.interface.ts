@@ -1,4 +1,5 @@
 import { Author } from './author.interface';
+import { Album } from './album.interface';
 
 export interface NormalizedSong {
     readonly title: string;
@@ -12,12 +13,5 @@ export interface NormalizedSong {
         href: string,
     }>;
     readonly chordsKey?: string;
-    readonly album?: {
-        title: string;
-        thumbnailImg: string;
-        author: Author;
-        year: string;
-        text: string;
-        href?: string;
-    };
+    readonly album?: Album;
 }

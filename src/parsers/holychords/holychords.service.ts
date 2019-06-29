@@ -96,7 +96,6 @@ export class HolyChordsService extends Parser {
             const videoAttachment = $('.videoEmbed iframe').first().attr('src');
             const albumName = $(`*[itemprop = 'inAlbum']`).first().text();
             const albumHref = $(`*[itemprop = 'inAlbum'] a`).first().attr('href');
-            const albumImg = $(`.entry-header img.noprint imgcover`).first().attr('src');
             const tags = [];
             $(`footer a[rel = 'tag']`).each((j, tag) => {
                 tags.push($(tag).text());
@@ -110,6 +109,12 @@ export class HolyChordsService extends Parser {
                 });
             });
 
+            const album = await this.getAlbumInfo(
+                albumHref ? SITE_URL + albumHref : null,
+                albumName,
+                identificator.author,
+            );
+
             return {
                 title,
                 songText,
@@ -119,14 +124,45 @@ export class HolyChordsService extends Parser {
                 audioMp3: audioMp3 ? SITE_URL + audioMp3 : null,
                 tags,
                 translations,
-                album: {
-                    title: albumName,
-                    thumbnailImg: albumImg ? SITE_URL + albumImg : null,
-                    author: identificator.author,
-                    href: albumHref ? SITE_URL + albumHref : null,
-                },
+                album,
             };
 
+        } catch (e) {
+            return null;
+        }
+    }
+
+    private async getAlbumInfo(url: string, title: string, author: Author) {
+        try {
+            const response = await this.apiService.sendGetRequest(url);
+            if (!response.data) { return null; }
+
+            let iTunes; let googlePlay;
+            const $ = cheerio.load(response.data);
+            $('a.butshop').each((i, item) => {
+                const href = $(item).attr('href');
+                if (/itunes/.test(href)) {
+                    iTunes = href;
+                }
+                if (/play.google/.test(href)) {
+                    googlePlay = href;
+                }
+            });
+
+            const description = $('.oneThird.last').first().text();
+            const year = $('.boxSingleName h3').first().text().match(/\d+/g);
+            const thumbnailImg = $('.banner-image img').first().attr('src');
+
+            return {
+                title,
+                url,
+                year: year ? year.join('').substr(year.length - 4) : null,
+                description: description ? description : null,
+                author,
+                thumbnailImg:  thumbnailImg ? SITE_URL +  thumbnailImg : null,
+                iTunes,
+                googlePlay,
+            };
         } catch (e) {
             return null;
         }

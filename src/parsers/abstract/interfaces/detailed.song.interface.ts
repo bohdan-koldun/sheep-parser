@@ -1,4 +1,5 @@
 import { Author } from './author.interface';
+import { Album } from './album.interface';
 
 export interface DetailedSong {
     readonly title: string;
@@ -12,10 +13,5 @@ export interface DetailedSong {
         translatin: string,
         href: string,
     }>;
-    readonly album?: {
-        title: string;
-        author?: Author;
-        thumbnailImg: string;
-        href: string;
-    };
+    readonly album?: Album;
 }
