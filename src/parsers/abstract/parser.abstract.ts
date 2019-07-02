@@ -9,7 +9,7 @@ import * as fs from 'fs';
 const Spinner = require('cli-spinner').Spinner;
 
 export abstract class Parser {
-    private _songUrlList: SongIdentificator [] = [];
+    private _songUrlList: SongIdentificator[] = [];
     private _songDetailedList: DetailedSong[] = [];
     private _normalizedSongs: NormalizedSong[] = [];
 
@@ -18,11 +18,11 @@ export abstract class Parser {
     protected readonly socketService: SocketService;
     protected readonly normalizerService: NormalizerService;
 
-    get songUrlList(): SongIdentificator [] {
+    get songUrlList(): SongIdentificator[] {
         return this._songUrlList;
     }
 
-    set songUrlList(songUrlList: SongIdentificator []) {
+    set songUrlList(songUrlList: SongIdentificator[]) {
         this._songUrlList = songUrlList;
     }
 
@@ -65,11 +65,9 @@ export abstract class Parser {
             await this.writeNormalizingListToFile(process.hrtime(hrstart));
         }
 
-        // this.socketService.reconect();
+        this.socketService.reconect();
 
-        // await this.watchProcess('send socket package... ', this.sendUpdates);
-
-        // await this.socketService.finishSending();
+        await this.watchProcess('send socket package... ', this.sendUpdates);
     }
 
     abstract parsePage(identificator: SongIdentificator): Promise<DetailedSong>;
@@ -124,10 +122,10 @@ export abstract class Parser {
         }
     }
 
-    async sendUpdates() {
+    sendUpdates() {
         try {
             for (const [i, project] of this.normalizedSongs.entries()) {
-                await this.socketService.sendData(project);
+                this.socketService.sendData(project);
 
                 if (i + 1 % 100 === 0 || i + 1 === this.normalizedSongs.length) {
                     this.logger.log(`sended ${i + 1} songs`);

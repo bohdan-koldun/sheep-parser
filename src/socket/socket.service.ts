@@ -27,13 +27,7 @@ export class SocketService {
     }
 
     sendData(data: NormalizedSong) {
-        return this.emitEvent('send-project', data);
-    }
-
-    async finishSending(): Promise<void> {
-        const parser = this.configService.get('parser.name');
-        await this.emitEvent('finish-sending', parser);
-        this.socket.disconnect();
+       this.emitEvent('new parsed song', data);
     }
 
     async reconect() {
