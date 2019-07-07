@@ -33,16 +33,18 @@ export class NormalizerService {
             tags, videoAttachment, translations, url,
         } = song;
 
+        if (!title) { return null; }
+
         let { audioMp3, album } = song;
         audioMp3 = await this.normalizeLink(audioMp3, title);
-        album = {
+        album = album ? {
             ...album,
             thumbnailImg: await this.normalizeLink(album.thumbnailImg, 'album_' + album.title),
             author: {
                 ...album.author,
                 thumbnailImg: await this.normalizeLink(album.author.thumbnailImg, 'author_' + album.author.name),
             },
-        };
+        } : null;
 
         return {
             title,

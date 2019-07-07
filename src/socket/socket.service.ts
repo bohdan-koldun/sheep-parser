@@ -30,13 +30,17 @@ export class SocketService {
        this.emitEvent('new parsed song', data);
     }
 
+    async finishSending() {
+        await this.emitEvent('last parsed song', {});
+        this.socket.disconnect();
+    }
+
     async reconect() {
         this.socketConnect();
     }
 
     private socketConnect() {
         this.socket = socket.connect(this.configService.get('socket.appUrl'));
-
         this.socket.on('connect', () => {
             this.logger.log(
                 'socket connected to ' + this.configService.get('socket.appUrl'),

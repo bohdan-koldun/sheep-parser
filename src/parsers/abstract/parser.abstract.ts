@@ -68,6 +68,8 @@ export abstract class Parser {
         this.socketService.reconect();
 
         await this.watchProcess('send socket package... ', this.sendUpdates);
+
+        await this.socketService.finishSending();
     }
 
     abstract parsePage(identificator: SongIdentificator): Promise<DetailedSong>;

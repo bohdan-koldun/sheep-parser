@@ -8,6 +8,7 @@ import { ApiService } from '../../api/api.service';
 import { DetailedSong } from '../abstract/interfaces/detailed.song.interface';
 import { SongIdentificator } from '../abstract/interfaces/song.identificator.interface';
 import { Author } from '../abstract/interfaces/author.interface';
+import { async } from 'rxjs/internal/scheduler/async';
 
 const SITE_URL = 'https://holychords.com';
 const AUTHOR_URL = 'https://holychords.com/artists';
@@ -34,7 +35,8 @@ export class HolyChordsService extends Parser {
 
     private async getSongList() {
         for (let i = 0; i < this.authors.length; i++) {
-            const response = await this.apiService.sendGetRequest(this.authors[i].uri);
+            await this.getOnePageAuthorSongs(this.authors[i].url, this.authors[i]);
+            const response = await this.apiService.sendGetRequest(this.authors[i].url);
 
             const $ = cheerio.load(response.data);
             const description = $('.twoThird.last').first().text();
@@ -44,18 +46,34 @@ export class HolyChordsService extends Parser {
                 description: description ? description : null,
                 thumbnailImg: thumbnailImg ? SITE_URL + thumbnailImg : null,
             };
-            $('a.topcharts__item-title').each((j, song) => {
-                const uri = $(song).attr('href');
+            const uris = [];
+            $('.pagination.pagination-primary a').each((j, page) => {
+                const uri = $(page).attr('href');
                 if (uri) {
-                    this.songUrlList.push({ uri, author: this.authors[i] });
+                    uris.push(SITE_URL + uri);
                 }
             });
+
+            for (const url of uris) {
+                await this.getOnePageAuthorSongs(url, this.authors[i]);
+            }
 
             this.logger.log(`${this.authors[i].name} songs list are parsed`);
             if (this.maxParsedSongs < i) {
                 break;
             }
         }
+    }
+
+    private async getOnePageAuthorSongs(url, author) {
+        const response = await this.apiService.sendGetRequest(url);
+        const $ = cheerio.load(response.data);
+        $('a.topcharts__item-title').each((j, song) => {
+            const uri = $(song).attr('href');
+            if (uri) {
+                this.songUrlList.push({ uri, author });
+            }
+        });
     }
 
     private async getAuthorList() {
@@ -68,7 +86,7 @@ export class HolyChordsService extends Parser {
                 const href = $(author).attr('href');
                 this.authors.push({
                     name: $(author).first().text(),
-                    uri: href ? SITE_URL + href : null,
+                    url: href ? SITE_URL + href : null,
                 });
             });
 
@@ -159,7 +177,7 @@ export class HolyChordsService extends Parser {
                 year: year ? year.join('').substr(year.length - 4) : null,
                 description: description ? description : null,
                 author,
-                thumbnailImg:  thumbnailImg ? SITE_URL +  thumbnailImg : null,
+                thumbnailImg: thumbnailImg ? SITE_URL + thumbnailImg : null,
                 iTunes,
                 googlePlay,
             };
