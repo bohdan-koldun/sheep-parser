@@ -187,7 +187,7 @@ export class HolyChordsService extends Parser {
     }
 
     async normalize(): Promise<void> {
-        return super.normalize(20);
+        return super.normalize(50);
     }
 
     public async start() {

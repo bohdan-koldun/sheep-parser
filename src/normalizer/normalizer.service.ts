@@ -46,6 +46,10 @@ export class NormalizerService {
             },
         } : null;
 
+        if (audioMp3 && /holychords/.test(audioMp3)) { return null; }
+        if (audioMp3 && /holychords/.test(audioMp3)) { return null; }
+        if (album && album.thumbnailImg &&  /holychords/.test(album.thumbnailImg)) { return null; }
+
         return {
             title,
             songText,
